@@ -1,0 +1,68 @@
+# Git 相关
+.git
+.gitignore
+.gitattributes
+
+# Python 相关
+__pycache__
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info
+dist
+build
+*.egg
+.eggs
+
+# 虚拟环境
+venv
+env
+ENV
+.venv
+
+# IDE 相关
+.vscode
+.idea
+*.swp
+*.swo
+*~
+.DS_Store
+
+# 测试相关
+.pytest_cache
+.coverage
+htmlcov
+.tox
+.hypothesis
+
+# 文档
+docs/_build
+docs/build
+*.md
+!README.md
+
+# 示例和测试（如果不需要）
+tests
+examples/notebook
+
+# 日志和临时文件
+*.log
+*.tmp
+*.bak
+.cache
+
+# Docker 相关
+Dockerfile*
+.dockerignore
+docker-compose.yml
+
+# CI/CD
+.github
+.gitlab-ci.yml
+.travis.yml
+
+# 其他
+*.tar.gz
+*.zip
+.env

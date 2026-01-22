@@ -1,0 +1,46 @@
+# 单阶段优化版本：使用 runtime 基础镜像
+FROM pytorch/pytorch:2.5.1-cuda12.4-cudnn9-runtime
+
+# 设置环境变量
+ENV PYTHONUNBUFFERED=1 \
+    DEBIAN_FRONTEND=noninteractive \
+    TZ=Asia/Shanghai \
+    CUDA_HOME=/usr/local/cuda \
+    PIP_NO_CACHE_DIR=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1 \
+    PIP_ROOT_USER_ACTION=ignore
+
+# # 更新系统包并安装常用工具
+# RUN apt-get update && \
+#     apt-get install -y --no-install-recommends \
+#         apt-utils \
+#         curl \
+#         wget \
+#         git \
+#         vim && \
+#     apt-get clean && \
+#     rm -rf /var/lib/apt/lists/*
+
+# 设置工作目录
+WORKDIR /workspace/ms-swift
+
+# 设置 pip 镜像源并升级基础工具
+RUN pip config set global.index-url https://mirrors.aliyun.com/pypi/simple/ && \
+    pip install --no-cache-dir --upgrade pip setuptools wheel
+
+# 复制项目代码（放在最后，避免代码变更导致重新安装依赖）
+COPY . /workspace/ms-swift/
+
+RUN pip install --no-cache-dir -e '.[all]' && \
+    rm -rf /root/.cache/pip /tmp/* /var/tmp/*
+
+# 暴露端口
+ENV WEBUI_PORT=8000
+EXPOSE 8000
+
+# Copy aicp-init script
+RUN mkdir -p /aicp-init/script
+COPY aicp-init /aicp-init/script/aicp-init
+RUN chmod +x /aicp-init/script/aicp-init
+
+ENTRYPOINT [ "swift", "web-ui" ]
