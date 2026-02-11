@@ -72,6 +72,8 @@ class DatasetMeta:
 
 DATASET_MAPPING: Dict[Tuple[str, str, str], DatasetMeta] = {}
 
+# Supported file extensions when listing local dir in get_dataset_list
+_LOCAL_LIST_EXT = ('.json', '.jsonl', '.csv', '.txt', '.parquet')
 
 def get_dataset_list():
     datasets = []
@@ -82,6 +84,19 @@ def get_dataset_list():
         else:
             if key[0]:
                 datasets.append(key[0])
+
+    # load local datasets from dataset/ folder
+    d = os.path.abspath(os.path.expanduser("dataset/"))
+    if os.path.isdir(d):
+        for name in sorted(os.listdir(d)):
+            if name.startswith('.'):
+                continue
+            path = os.path.join(d, name)
+            if os.path.isdir(path):
+                datasets.append(path)
+            elif os.path.isfile(path) and any(path.lower().endswith(ext) for ext in _LOCAL_LIST_EXT):
+                datasets.append(path)
+
     return datasets
 
 
