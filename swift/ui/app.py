@@ -11,12 +11,19 @@ import swift
 from swift.llm import (DeployArguments, EvalArguments, ExportArguments, RLHFArguments, SamplingArguments, SwiftPipeline,
                        WebUIArguments)
 from swift.ui.llm_eval.llm_eval import LLMEval
+from swift.ui.llm_eval.runtime import EvalRuntime
 from swift.ui.llm_export.llm_export import LLMExport
+from swift.ui.llm_export.runtime import ExportRuntime
+from swift.ui.llm_grpo.external_runtime import RolloutRuntime
 from swift.ui.llm_grpo.llm_grpo import LLMGRPO
 from swift.ui.llm_infer.llm_infer import LLMInfer
+from swift.ui.llm_infer.runtime import Runtime as InferRuntime
 from swift.ui.llm_rlhf.llm_rlhf import LLMRLHF
 from swift.ui.llm_sample.llm_sample import LLMSample
+from swift.ui.llm_sample.runtime import SampleRuntime
+from swift.ui.llm_train.dataset import Dataset
 from swift.ui.llm_train.llm_train import LLMTrain
+from swift.ui.llm_train.runtime import Runtime as TrainRuntime
 
 locale_dict = {
     'title': {
@@ -107,6 +114,35 @@ class SwiftWebUI(SwiftPipeline):
                 partial(LLMSample.update_input_model, arg_cls=SamplingArguments, has_record=False),
                 inputs=[LLMSample.element('model')],
                 outputs=list(LLMSample.valid_elements().values()))
+            # 页面加载时自动更新数据集选择
+            app.load(
+                Dataset.update_dataset_choices,
+                outputs=[LLMTrain.element('dataset')])
+            # 页面加载时自动找回各 Tab 的运行中任务
+            app.load(
+                partial(TrainRuntime.refresh_tasks, group='llm_train'),
+                outputs=[LLMTrain.element('running_tasks')])
+            app.load(
+                partial(TrainRuntime.refresh_tasks, group='llm_rlhf'),
+                outputs=[LLMRLHF.element('running_tasks')])
+            app.load(
+                partial(TrainRuntime.refresh_tasks, group='llm_grpo'),
+                outputs=[LLMGRPO.element('running_tasks')])
+            app.load(
+                RolloutRuntime.refresh_tasks,
+                outputs=[LLMGRPO.element('rollout_running_tasks')])
+            app.load(
+                InferRuntime.refresh_tasks,
+                outputs=[LLMInfer.element('running_tasks')])
+            app.load(
+                ExportRuntime.refresh_tasks,
+                outputs=[LLMExport.element('running_tasks')])
+            app.load(
+                EvalRuntime.refresh_tasks,
+                outputs=[LLMEval.element('running_tasks')])
+            app.load(
+                SampleRuntime.refresh_tasks,
+                outputs=[LLMSample.element('running_tasks')])
         app.queue(**concurrent).launch(server_name=server, inbrowser=True, server_port=port, height=800, share=share)
 
 

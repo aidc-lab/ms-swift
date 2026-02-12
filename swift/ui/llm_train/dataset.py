@@ -61,6 +61,10 @@ class Dataset(BaseUI):
     }
 
     @classmethod
+    def update_dataset_choices(cls):
+        return gr.update(choices=get_dataset_list())
+
+    @classmethod
     def do_build_ui(cls, base_tab: Type['BaseUI']):
         with gr.Accordion(elem_id='dataset_param', open=True):
             with gr.Row():

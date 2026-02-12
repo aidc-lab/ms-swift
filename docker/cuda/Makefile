@@ -1,6 +1,6 @@
 IMAGE_NAME ?= ghcr.io/aidc-lab/ms-swift
 PROD_IMAGE_TAG ?= v3.12.0-alpha.3-cuda
-SLIM_IMAGE_TAG  ?= v3.12.0-slim.8-cuda
+SLIM_IMAGE_TAG  ?= v3.12.0-slim.9-cuda
 # platforms, multiple platforms should be separated by comma
 PLATFORMS  ?= linux/amd64
 
