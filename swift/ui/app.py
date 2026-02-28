@@ -22,6 +22,7 @@ from swift.ui.llm_rlhf.llm_rlhf import LLMRLHF
 from swift.ui.llm_sample.llm_sample import LLMSample
 from swift.ui.llm_sample.runtime import SampleRuntime
 from swift.ui.llm_train.dataset import Dataset
+from swift.ui.llm_train.model import Model
 from swift.ui.llm_train.llm_train import LLMTrain
 from swift.ui.llm_train.runtime import Runtime as TrainRuntime
 
@@ -114,10 +115,30 @@ class SwiftWebUI(SwiftPipeline):
                 partial(LLMSample.update_input_model, arg_cls=SamplingArguments, has_record=False),
                 inputs=[LLMSample.element('model')],
                 outputs=list(LLMSample.valid_elements().values()))
-            # 页面加载时自动更新数据集选择
-            app.load(
-                Dataset.update_dataset_choices,
+            # 页面加载时自动更新模型和数据集选项列表
+            app.load(Model.update_model_choices,
+                outputs=[LLMTrain.element('model')])
+            app.load(Model.update_model_choices,
+                outputs=[LLMRLHF.element('model')])
+            app.load(Model.update_model_choices,
+                outputs=[LLMGRPO.element('model')])
+            app.load(Model.update_model_choices,
+                outputs=[LLMInfer.element('model')])
+            app.load(Model.update_model_choices,
+                outputs=[LLMExport.element('model')])
+            app.load(Model.update_model_choices,
+                outputs=[LLMEval.element('model')])
+            app.load(Model.update_model_choices,
+                outputs=[LLMSample.element('model')])
+    
+            app.load(Dataset.update_dataset_choices,
                 outputs=[LLMTrain.element('dataset')])
+            app.load(Dataset.update_dataset_choices,
+                outputs=[LLMRLHF.element('dataset')])
+            app.load(Dataset.update_dataset_choices,
+                outputs=[LLMGRPO.element('dataset')])
+            app.load(Dataset.update_dataset_choices,
+                outputs=[LLMExport.element('dataset')])
             # 页面加载时自动找回各 Tab 的运行中任务
             app.load(
                 partial(TrainRuntime.refresh_tasks, group='llm_train'),

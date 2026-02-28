@@ -25,13 +25,19 @@ ENV PYTHONUNBUFFERED=1 \
 WORKDIR /workspace/ms-swift
 
 # 设置 pip 镜像源并升级基础工具
+# RUN pip config set global.index-url https://mirrors.aliyun.com/pypi/simple/ && \
+#     pip install --no-cache-dir --upgrade pip setuptools wheel
+
 RUN pip config set global.index-url https://mirrors.aliyun.com/pypi/simple/ && \
-    pip install --no-cache-dir --upgrade pip setuptools wheel
+    pip install --upgrade pip setuptools wheel
 
 # 复制项目代码（放在最后，避免代码变更导致重新安装依赖）
 COPY . /workspace/ms-swift/
 
-RUN pip install --no-cache-dir -e '.[all]' && \
+# RUN pip install --no-cache-dir -e '.[all]' && \
+#     rm -rf /root/.cache/pip /tmp/* /var/tmp/*
+
+RUN pip install -e '.[all]' && \
     rm -rf /root/.cache/pip /tmp/* /var/tmp/*
 
 # 暴露端口

@@ -548,6 +548,19 @@ def get_all_models() -> List[str]:
                     else:
                         if model.ms_model_id:
                             models.append(model.ms_model_id)
+    # 追加 output 目录下的 checkpoint-xxx 目录
+    models.extend(get_output_models())
+    return models
+
+
+def get_output_models() -> List[str]:
+    models = []
+    output_dir = os.path.abspath(os.path.expanduser("output/"))
+    if os.path.isdir(output_dir):
+        for root, dirs, _ in os.walk(output_dir):
+            for dir in dirs:
+                if dir.startswith("checkpoint-"):
+                    models.append(os.path.join(root, dir))
     return models
 
 
