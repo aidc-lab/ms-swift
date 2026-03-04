@@ -31,7 +31,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 # 升级 pip 并安装基础工具
 RUN pip config set global.index-url https://mirrors.aliyun.com/pypi/simple/
-RUN pip install --no-cache-dir --upgrade pip setuptools wheel
+RUN pip install --no-cache-dir --upgrade pip "setuptools<81" wheel
 
 # 复制项目文件到容器
 COPY . /workspace/ms-swift/

@@ -29,7 +29,7 @@ WORKDIR /workspace/ms-swift
 #     pip install --no-cache-dir --upgrade pip setuptools wheel
 
 RUN pip config set global.index-url https://mirrors.aliyun.com/pypi/simple/ && \
-    pip install --upgrade pip setuptools wheel
+    pip install --upgrade pip "setuptools<81" wheel
 
 # 复制项目代码（放在最后，避免代码变更导致重新安装依赖）
 COPY . /workspace/ms-swift/
